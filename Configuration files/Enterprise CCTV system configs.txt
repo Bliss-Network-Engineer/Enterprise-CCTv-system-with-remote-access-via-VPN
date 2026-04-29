@@ -1,0 +1,139 @@
+###Trunk Ports Config###
+en
+conf t
+int range gig0/1-gig0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+
+ex
+
+do wr
+
+### VTP #####
+SErver
+
+vtp domain Mynetwork
+vtp mode server
+vtp password admin
+vtp version 2
+
+Clients
+vtp domain Mynetwork
+vtp mode client
+vtp password admin
+
+VLAN CREATION
+vlan 10
+name Floor1-Vlan
+ex
+
+vlan 20
+name Floor2-Vlan
+ex
+
+vlan 30
+name Floor3-Vlan
+ex
+
+vlan 40
+name Floor4-Vlan
+ex
+
+do wr
+ 
+### HSRP Config###
+Active {floor 1 & 2}
+
+int vlan 10
+ip address 172.16.1.17 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 10 ip 172.16.1.18
+standby 10 priority 110
+standby 10 preempt
+
+int vlan 20
+ip address 172.16.1.49 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 20 ip 172.16.1.50
+standby 20 priority 110
+standby 20 preempt
+
+int vlan 30
+ip address 172.16.1.81 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 30 ip 172.16.1.82
+standby 30 priority 90
+standby 30 preempt
+
+int vlan 40
+ip address 172.16.1.113 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 40 ip 172.16.1.114
+standby 40 priority 90
+standby 40 preempt
+
+int vlan 100
+ip address 172.16.2.2 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 100 ip 172.16.2.1
+standby 100 priority 110
+standby 100 preempt
+
+Standby {floor 3 & 4}
+
+int vlan 10
+ip address 172.16.1.19 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 10 ip 172.16.1.18
+standby 10 priority 90
+standby 10 preempt
+
+int vlan 20
+ip address 172.16.1.51 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 20 ip 172.16.1.50
+standby 20 priority 90
+standby 20 preempt
+
+int vlan 30
+ip address 172.16.1.83 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 30 ip 172.16.1.82
+standby 30 priority 110
+standby 30 preempt
+
+int vlan 40
+ip address 172.16.1.115 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 40 ip 172.16.1.114
+standby 40 priority 110
+standby 40 preempt
+
+int vlan 100
+ip address 172.16.2.3 255.255.255.224
+ip helper-address 172.16.2.5
+standby version 2
+standby 100 ip 172.16.2.1
+standby 100 priority 90
+standby 100 preempt
+
+## Routing
+
+router ospf 1
+network 10.0.0.1 0.0.0.0 area 0
+
+router ospf 1
+network 10.0.0.2 0.0.0.0 area 0
+
+router ospf 1
+network 10.0.0.7 0.0.0.0 area 0
+network 172.16.1.0 0.0.0.15 area 0
